@@ -1,11 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 class CustomUser(AbstractUser):
     """
     This is our "pro" user model.
     We are "outlawing" the "slop" default model.
     """
+
     email = models.EmailField(unique=True)
 
     # We will add our "pro" fields here later:
