@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     "apps.marketdata",
     "apps.calculators",
     "apps.analysis",
+    # "Pro" 3rd-Party Apps
+    "django_htmx",
     # "Slop" Apps (Django Defaults)
     "django.contrib.admin",
     "django.contrib.auth",
@@ -52,14 +54,17 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
 
+# This is the "pro" TEMPLATES block.
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],  # We will fix this later for our "pro" landing page
+        # This is the "pro" fix. We "outlaw" "slop" empty DIRS.
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -102,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 LANGUAGE_CODE = "en-gb"  # <--- This is "pro" for our "UK-First" app
 TIME_ZONE = "UTC"
-USE_I18N = True
+USE_I1N = True
 USE_TZ = True
 
 

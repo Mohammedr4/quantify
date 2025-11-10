@@ -1,0 +1,21 @@
+<div class="space-y-2">
+  <h3 class="font-semibold text-white">Projected Outcome:</h3>
+  <dl class="space-y-1 text-gray-300">
+    <div class="flex justify-between">
+      <dt>New Average Price:</dt>
+      <dd class="font-medium text-white">${{ new_avg_price|floatformat:2 }}</dd>
+    </div>
+    <div class="flex justify-between">
+      <dt>Total Shares:</dt>
+      <dd class="font-medium text-white">{{ total_shares|floatformat:0 }}</dd>
+    </div>
+    <div class="flex justify-between">
+      <dt>New Total Investment:</dt>
+      <dd class="font-medium text-white">${{ total_investment|floatformat:2 }}</dd>
+    </div>
+  </dl>
+</div>
+
+<button type="button" class="mt-4 w-full rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-400">
+  Save This Scenario
+</button>
