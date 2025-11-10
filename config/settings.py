@@ -31,6 +31,10 @@ ALLOWED_HOSTS = []  # This is "pro" for local. We will fix this for Railway.
 INSTALLED_APPS = [
     # "Pro" Apps
     "apps.users",
+    "apps.portfolios",
+    "apps.marketdata",
+    "apps.calculators",
+    "apps.analysis",
     # "Slop" Apps (Django Defaults)
     "django.contrib.admin",
     "django.contrib.auth",
