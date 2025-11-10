@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     "apps.analysis",
     # "Pro" 3rd-Party Apps
     "django_htmx",
+    "allauth",
+    "allauth.account",
     # "Slop" Apps (Django Defaults)
     "django.contrib.admin",
     "django.contrib.auth",
@@ -44,11 +46,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",  # <--- "pro" allauth requirement
 ]
 
+# This is the "pro" MIDDLEWARE block. It "outlaws" the "slop" error.
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    # THIS IS THE "PRO" FIX:
+    "allauth.account.middleware.AccountMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -81,8 +87,6 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # --- Database ---
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-# We use "pro" SQLite for "basics-first" local dev.
-# Our ".gitignore" "outlaws" this "slop" file from the repo.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -104,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # --- Internationalization ---
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
 LANGUAGE_CODE = "en-gb"  # <--- This is "pro" for our "UK-First" app
 TIME_ZONE = "UTC"
 USE_I1N = True
@@ -112,15 +115,29 @@ USE_TZ = True
 
 
 # --- Static files (CSS, JavaScript, Images) ---
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
 STATIC_URL = "static/"
 
 
 # --- Default primary key field type ---
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # --- "Pro" Custom User Model ---
-# This is the "bulletproof" setting. No "slop" typos.
 AUTH_USER_MODEL = "users.CustomUser"
+
+# --- "Pro" Auth (django-allauth) ---
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL = "/dashboard/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True

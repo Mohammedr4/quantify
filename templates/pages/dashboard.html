@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<div class="py-12 sm:py-16">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+
+      <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        Welcome, {{ user.email|default:'Boss' }}.
+      </h2>
+      <p class="mt-4 text-lg leading-8 text-gray-400">
+        Your "pro" dashboard is ready. Add your first transaction to bring it to life.
+      </p>
+
+      <div class="mt-10 flex items-center justify-center gap-x-6">
+        <a href="#" class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+          [ + Add Your First Transaction ]
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}
