@@ -1,0 +1,87 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+  
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-white">
+      Add Your First Transaction
+    </h2>
+  </div>
+
+  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="rounded-lg bg-gray-800 px-6 py-8 shadow sm:px-10">
+      
+      <form class="space-y-6" method="POST">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="rounded-md bg-red-500/20 p-4 mb-4">
+            <div class="flex">
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-400">General Error:</h3>
+                <div class="mt-2 text-sm text-red-400">
+                  {{ form.non_field_errors }}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div>
+          <label for="id_ticker" class="block text-sm font-medium leading-6 text-white">
+            Ticker (e.g., AAPL)
+          </label>
+          <div class="mt-2">
+            <input type="text" name="ticker" id="id_ticker" required class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+          </div>
+        </div>
+
+        {% for field in form %}
+          {% if field.name != 'stock' %}
+            <div>
+              <label for="{{ field.id_for_label }}" class="block text-sm font-medium leading-6 text-white">
+                {{ field.label }}
+              </label>
+              <div class="mt-2">
+                {{ field }}
+              </div>
+              
+              {% if field.errors %}
+                <p class="mt-2 text-sm text-red-400">{{ field.errors.0 }}</p>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+        
+        <div>
+          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400">
+            Save Transaction
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const proInputClass = "block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6";
+    
+    const allSelects = document.querySelectorAll("form select");
+    allSelects.forEach(function(select) {
+       select.className += " block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6";
+    });
+
+    const allInputs = document.querySelectorAll("form input[type='text'], form input[type='number'], form input[type='date']");
+    allInputs.forEach(function(input) {
+      if (input.type === 'date') {
+        input.type = 'text';
+        input.setAttribute('placeholder', 'YYYY-MM-DD');
+      }
+      input.className += proInputClass;
+    });
+  });
+</script>
+{% endblock content %}
