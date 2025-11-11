@@ -6,6 +6,7 @@ This is the "bulletproof," "non-slop" settings file.
 import environ  # <--- This is "pro"
 import os       # <--- This is "pro"
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,7 @@ SECRET_KEY = env('SECRET_KEY')
 # We "outlaw" "slop" DEBUG in production.
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = [] # This is "pro" for local. We will fix this for Railway.
+ALLOWED_HOSTS = ['*'] # This is "pro" for local. We will fix this for Railway.
 
 
 # --- Application definition ---
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
 # This is the "pro" MIDDLEWARE block. It "outlaws" the "slop" error.
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     
     # THIS IS THE "PRO" FIX:
@@ -91,13 +93,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# --- Database ---
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# --- "Pro" Database Switch ---
+# If DATABASE_URL exists (Railway), use it. If not, use SQLite (Local).
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600
+    )
 }
 
 
@@ -158,3 +160,13 @@ ACCOUNT_LOGIN_METHODS = {'email'}
 
 # We "outlaw" the "slop" double-password.
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+
+# --- Static Files (WhiteNoise) ---
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# This compresses files and caches them forever (high performance)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# --- "Pro" Security ---
+# Allow CSRF from our production domain
+CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://getquantify.co.uk']
