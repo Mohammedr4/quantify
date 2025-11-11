@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "allauth",
     "allauth.account",
+    'django_extensions',
     # "Slop" Apps (Django Defaults)
     "django.contrib.admin",
     "django.contrib.auth",
