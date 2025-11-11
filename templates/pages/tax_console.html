@@ -1,0 +1,77 @@
+{% extends "_base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="min-h-full">
+  <nav class="bg-gray-800 border-b border-gray-700">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="{% url 'users:dashboard' %}" class="text-xl font-bold text-white hover:text-gray-300">Quantify</a>
+          </div>
+          <div class="ml-10 flex items-baseline space-x-4">
+            <span class="text-indigo-400 px-3 py-2 text-sm font-medium">Tax Console (UK Section 104)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="py-10">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      
+      <div class="mb-8 overflow-hidden rounded-lg bg-gray-800 shadow">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="truncate text-sm font-medium text-gray-400">Estimated Capital Gains (Total)</dt>
+          <dd class="mt-1 text-3xl font-semibold tracking-tight {% if grand_total_gain >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
+            £{{ grand_total_gain|floatformat:2|intcomma }}
+          </dd>
+          <p class="mt-2 text-sm text-gray-500">*Calculated using UK Section 104 Share Pooling rules.</p>
+        </div>
+      </div>
+
+      {% for report in reports %}
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold leading-6 text-white mb-4">{{ report.portfolio_name }}</h3>
+        
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-700">
+            <thead class="bg-gray-800">
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6">Date</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Asset</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Sold</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Proceeds</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Cost Basis (Pool)</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Gain/Loss</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700 bg-gray-900">
+              {% for event in report.events %}
+              <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-200 sm:pl-6">{{ event.date }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-200">{{ event.ticker }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-400">{{ event.quantity|floatformat:0 }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-400">£{{ event.proceeds|floatformat:2|intcomma }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-400">£{{ event.cost_basis|floatformat:2|intcomma }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm font-bold {% if event.gain >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
+                  £{{ event.gain|floatformat:2|intcomma }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% empty %}
+      <div class="text-center py-12">
+        <h3 class="mt-2 text-sm font-semibold text-white">No Taxable Events</h3>
+        <p class="mt-1 text-sm text-gray-400">You haven't sold anything yet, so you have no Capital Gains to report.</p>
+      </div>
+      {% endfor %}
+
+    </div>
+  </main>
+</div>
+{% endblock content %}

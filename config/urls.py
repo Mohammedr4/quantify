@@ -4,13 +4,14 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # This is our "pro" auth "steering wheel"
+    # "Pro" Auth
     path('accounts/', include('allauth.urls')), 
 
-    # This is our "pro" "basics-first" routing.
-    # It "outlaws" "slop" namespaces in the include.
-    # The "pro" `app_name` in each app's `urls.py` handles this.
+    # "Pro" Apps
     path("", include("apps.portfolios.urls")),
     path("", include("apps.users.urls")),
     path("", include("apps.calculators.urls")),
+
+    # THIS IS THE "PRO" FIX:
+    path("", include("apps.analysis.urls")), 
 ]

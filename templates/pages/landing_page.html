@@ -1,66 +1,89 @@
 {% extends "_base.html" %}
 
 {% block content %}
-<div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+<div class="min-h-full flex flex-col">
+  
+  <nav class="flex items-center justify-between px-6 py-4">
+    <div class="flex items-center">
+      <span class="text-xl font-bold text-white tracking-tight">Quantify</span>
+    </div>
+    <div class="flex items-center gap-4">
+      {% if user.is_authenticated %}
+        <a href="{% url 'users:dashboard' %}" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+          Dashboard &rarr;
+        </a>
+      {% else %}
+        <a href="{% url 'account_login' %}" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+          Sign In
+        </a>
+        <a href="{% url 'account_signup' %}" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 transition-colors">
+          Get Started
+        </a>
+      {% endif %}
+    </div>
+  </nav>
 
-  <div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-white">
-      Repricing Strategy Console
-    </h2>
-    <p class="mt-2 text-center text-sm text-gray-400">
-      Model your "pro" moves. No sign-up required.
-    </p>
-  </div>
+  <div class="flex-grow flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-white">
+        Repricing Strategy Console
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-400">
+        Model your "pro" moves. No sign-up required.
+      </p>
+    </div>
 
-  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-    <div class="rounded-lg bg-gray-800 px-6 py-8 shadow sm:px-10">
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="rounded-lg bg-gray-800 px-6 py-8 shadow-xl ring-1 ring-white/10 sm:px-10">
 
-      <form class="space-y-6"
-      method="POST" 
-      hx-post="{% url 'calculators:landing' %}"
-      hx-target="#reprice-results"
-      hx-swap="innerHTML">
+        <form class="space-y-6"
+              method="POST" 
+              hx-post="{% url 'calculators:landing' %}"
+              hx-target="#reprice-results"
+              hx-swap="innerHTML">
+          
+          {% csrf_token %}
 
-        {% csrf_token %}
-
-        <div>
-          <label for="shares_held" class="block text-sm font-medium leading-6 text-white">Current Shares Held</label>
-          <div class="mt-2">
-            <input id="shares_held" name="shares_held" type="number" step="any" required class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+          <div>
+            <label for="shares_held" class="block text-sm font-medium leading-6 text-white">Current Shares Held</label>
+            <div class="mt-2">
+              <input id="shares_held" name="shares_held" type="number" step="any" required class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 transition-all">
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label for="avg_price" class="block text-sm font-medium leading-6 text-white">Current Average Price ($)</label>
-          <div class="mt-2">
-            <input id="avg_price" name="avg_price" type="number" step="any" required class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+          <div>
+            <label for="avg_price" class="block text-sm font-medium leading-6 text-white">Current Average Price ($)</label>
+            <div class="mt-2">
+              <input id="avg_price" name="avg_price" type="number" step="any" required class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 transition-all">
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label for="market_price" class="block text-sm font-medium leading-6 text-white">Current Market Price ($)</label>
-          <div class="mt-2">
-            <input id="market_price" name="market_price" type="number" step="any" required class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+          <div>
+            <label for="market_price" class="block text-sm font-medium leading-6 text-white">Current Market Price ($)</label>
+            <div class="mt-2">
+              <input id="market_price" name="market_price" type="number" step="any" required class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 transition-all">
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label for="shares_to_buy" class="block text-sm font-medium leading-6 text-white">Additional Shares to Buy</label>
-          <div class="mt-2">
-            <input id="shares_to_buy" name="shares_to_buy" type="number" step="any" required class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+          <div>
+            <label for="shares_to_buy" class="block text-sm font-medium leading-6 text-white">Additional Shares to Buy</label>
+            <div class="mt-2">
+              <input id="shares_to_buy" name="shares_to_buy" type="number" step="any" required class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 transition-all">
+            </div>
           </div>
-        </div>
 
-        <div>
-          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-            Calculate
-          </button>
-        </div>
-      </form>
+          <div>
+            <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all">
+              Calculate
+            </button>
+          </div>
+        </form>
+        
+        <div id="reprice-results" class="mt-6 border-t border-white/10 pt-6 empty:hidden">
+          </div>
 
-      <div id="reprice-results" class="mt-6 border-t border-white/10 pt-6">
-        </div>
-
+      </div>
     </div>
   </div>
 </div>
