@@ -20,7 +20,14 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = ['*'] # For "basics-first" deployment.
+# --- "Pro" Security: Lock the doors ---
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    '.railway.app', 
+    'getquantify.co.uk', 
+    'www.getquantify.co.uk'
+]
 
 # --- Application definition ---
 INSTALLED_APPS = [
@@ -142,10 +149,9 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email']
 
-# --- "Pro" Security (CSRF Fix) ---
-# We "outlaw" the "slop" crash by adding https://
+# We "outlaw" CSRF failures
 CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app', 
-    'https://getquantify.co.uk',
+    'https://getquantify.co.uk', 
     'https://www.getquantify.co.uk'
 ]
