@@ -158,3 +158,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://getquantify.co.uk',
     'https://www.getquantify.co.uk'
 ]
+
+# "Pro" Adapter to fix the Username Crash
+ACCOUNT_ADAPTER = 'apps.users.adapter.CustomAccountAdapter'
