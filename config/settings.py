@@ -3,8 +3,8 @@ Django settings for the Quantify "pro" project.
 This is the "bulletproof," "non-slop" settings file.
 """
 
-import environ  # <--- This is "pro"
-import os       # <--- This is "pro"
+import environ
+import os
 from pathlib import Path
 import dj_database_url
 
@@ -12,29 +12,17 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- "Pro" django-environ Setup ---
-env = environ.Env() # <--- This is the "pro" instance
-# We "outlaw" "slop" static methods. We use the "pro" instance:
-env.read_env(os.path.join(BASE_DIR, '.env')) # This reads your .env file
+env = environ.Env()
+# We silence the warning if .env is missing in production (Railway handles variables)
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # --- "Pro" Security Keys ---
-# We "outlaw" hardcoding "slop" keys.
-# The *real* key is in your ".env" file.
 SECRET_KEY = env('SECRET_KEY')
-
-# We "outlaw" "slop" DEBUG in production.
 DEBUG = env.bool('DEBUG', default=False)
 
-# "Pro" Security: Only allow our specific domains
-ALLOWED_HOSTS = [
-    'localhost', 
-    '127.0.0.1', 
-    '.railway.app', # Covers your railway internal URL
-    'getquantify.co.uk', # Your "pro" domain
-    'www.getquantify.co.uk'
-]
+ALLOWED_HOSTS = ['*'] # For "basics-first" deployment.
 
 # --- Application definition ---
-# This is the "pro" order. Our "pro" apps go FIRST.
 INSTALLED_APPS = [
     # "Pro" Apps
     'apps.users',
@@ -47,7 +35,8 @@ INSTALLED_APPS = [
     'django_htmx',
     'allauth',
     'allauth.account',
-    'django_extensions', # <--- "Pro" models
+    'django_extensions',
+    'django.contrib.humanize',
     
     # "Slop" Apps (Django Defaults)
     'django.contrib.admin',
@@ -56,19 +45,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites', # <--- "pro" allauth requirement
-    'django.contrib.humanize',
+    'django.contrib.sites',
 ]
 
-# This is the "pro" MIDDLEWARE block. It "outlaws" the "slop" error.
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # "Pro" Static Files
     'django.contrib.sessions.middleware.SessionMiddleware',
-    
-    # THIS IS THE "PRO" FIX:
-    'allauth.account.middleware.AccountMiddleware', 
-    
+    'allauth.account.middleware.AccountMiddleware', # "Pro" Auth Middleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -79,11 +63,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-# This is the "pro" TEMPLATES block.
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # This is the "pro" fix. We "outlaw" "slop" empty DIRS.
         'DIRS': [BASE_DIR / 'templates'], 
         'APP_DIRS': True,
         'OPTIONS': {
@@ -99,8 +81,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# --- "Pro" Database Switch ---
-# If DATABASE_URL exists (Railway), use it. If not, use SQLite (Local).
+# --- Database ---
+# "Pro" Database Switch (Postgres on Railway, SQLite locally)
 DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
@@ -110,7 +92,6 @@ DATABASES = {
 
 
 # --- Password validation ---
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -120,14 +101,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # --- Internationalization ---
-LANGUAGE_CODE = 'en-gb' # <--- This is "pro" for our "UK-First" app
+LANGUAGE_CODE = 'en-gb'
 TIME_ZONE = 'UTC'
 USE_I1N = True
 USE_TZ = True
 
 
-# --- Static files (CSS, JavaScript, Images) ---
+# --- Static files (WhiteNoise) ---
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # --- Default primary key field type ---
@@ -144,39 +127,25 @@ AUTHENTICATION_BACKENDS = [
 ]
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/dashboard/'
-ACCOUNT_LOGOUT_REDIRECT_URL = '/' # "Pro" redirect to landing page
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 # --- "Pro" "Non-Slop" `allauth` Config ---
 # We "outlaw" all "slop" warnings and "mediocre" settings.
-
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-
-# "Pro" Fix #1: We "outlaw" "slop" usernames.
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
-# "Pro" Fix #2: We "outlaw" the "slop" 'ACCOUNT_SIGNUP_FIELDS' setting *entirely*.
-# We will use the "pro" default which "bulletproof" works with our settings.
-
-# "Pro" Fix #3: We "outlaw" the "slop" 'ACCOUNT_LOGIN_METHODS' warning.
+# "Pro" Fix: Using sets/lists correctly to silence warnings
 ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email']
 
-# We "outlaw" the "slop" double-password.
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
-
-# --- Static Files (WhiteNoise) ---
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# This compresses files and caches them forever (high performance)
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# --- "Pro" Security ---
-# Allow CSRF from our production domain
+# --- "Pro" Security (CSRF Fix) ---
+# We "outlaw" the "slop" crash by adding https://
 CSRF_TRUSTED_ORIGINS = [
-    'quantify-production.up.railway.app', 
+    'https://*.railway.app', 
     'https://getquantify.co.uk',
     'https://www.getquantify.co.uk'
 ]
