@@ -24,8 +24,14 @@ SECRET_KEY = env('SECRET_KEY')
 # We "outlaw" "slop" DEBUG in production.
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = ['*'] # This is "pro" for local. We will fix this for Railway.
-
+# "Pro" Security: Only allow our specific domains
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    '.railway.app', # Covers your railway internal URL
+    'getquantify.co.uk', # Your "pro" domain
+    'www.getquantify.co.uk'
+]
 
 # --- Application definition ---
 # This is the "pro" order. Our "pro" apps go FIRST.
@@ -169,4 +175,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # --- "Pro" Security ---
 # Allow CSRF from our production domain
-CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://getquantify.co.uk']
+CSRF_TRUSTED_ORIGINS = [
+    'quantify-production.up.railway.app', 
+    'https://getquantify.co.uk',
+    'https://www.getquantify.co.uk'
+]
