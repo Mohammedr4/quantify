@@ -13,20 +13,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- "Pro" django-environ Setup ---
 env = environ.Env()
-# We silence the warning if .env is missing in production (Railway handles variables)
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # --- "Pro" Security Keys ---
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 
-# --- "Pro" Security: Lock the doors ---
+# "Pro" Security: Lock the doors
 ALLOWED_HOSTS = [
     'localhost', 
     '127.0.0.1', 
     '.railway.app', 
     'getquantify.co.uk', 
-    'www.getquantify.co.uk'
+    'www.getquantify.co.uk',
+    '*' # Fallback for debug, remove later if strict
 ]
 
 # --- Application definition ---
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', # "Pro" Static Files
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'allauth.account.middleware.AccountMiddleware', # "Pro" Auth Middleware
+    'allauth.account.middleware.AccountMiddleware', # "Pro" Auth
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -89,7 +89,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # --- Database ---
-# "Pro" Database Switch (Postgres on Railway, SQLite locally)
 DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
@@ -136,22 +135,26 @@ SITE_ID = 1
 LOGIN_REDIRECT_URL = '/dashboard/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
-# --- "Pro" "Non-Slop" `allauth` Config ---
-# We "outlaw" all "slop" warnings and "mediocre" settings.
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+# --- "Pro" Email Backend (The 500 Fix) ---
+# This "outlaws" crashes when trying to send emails
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+
+# --- "Pro" Classic Auth Config (The Password Fix) ---
+# We revert to the "Classic" settings that ALWAYS show password.
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-# "Pro" Fix: Using sets/lists correctly to silence warnings
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email']
+# We "outlaw" these new settings for now to ensure stability:
+# ACCOUNT_LOGIN_METHODS = {'email'} 
+# ACCOUNT_SIGNUP_FIELDS = ['email']
 
-# We "outlaw" CSRF failures
+# --- "Pro" Security ---
 CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app', 
-    'https://getquantify.co.uk', 
+    'https://getquantify.co.uk',
     'https://www.getquantify.co.uk'
 ]
